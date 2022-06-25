@@ -6,6 +6,7 @@ import os
 import logging
 import unittest
 from datetime import date
+from venv import create
 from werkzeug.exceptions import NotFound
 from service.models import DataValidationError, Shopcart, db
 from service import app
@@ -55,3 +56,12 @@ class TestYourResourceModel(unittest.TestCase):
     def test_XXXX(self):
         """It should always be true"""
         self.assertTrue(True)
+
+    def test_addShopCart(self):
+        '''Try to create a new shopcart and add it to the table'''
+        createdShopCart = Shopcart(2, "hello world")
+        createdShopCart.create()
+        shopCart = Shopcart.find(2)
+        self.assertTrue(shopCart.id==createdShopCart.id)
+        self.assertTrue(shopCart.name==createdShopCart.name)
+

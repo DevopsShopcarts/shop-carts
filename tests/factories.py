@@ -28,6 +28,6 @@ class ShopcartFactory(factory.Factory):
         model = Shopcart
 
     id = factory.Sequence(lambda n: n)
-    product = FuzzyChoice(choices=["apple", "cake", "coffee", "cabbage"])
-    quantity = FuzzyChoice(choices=[0, 1, 2, 3, 4])
-    empty = FuzzyChoice(choices=[True, False])
+    name = FuzzyChoice(choices=["apple", "cake", "coffee", "cabbage"])
+    # quantity = FuzzyChoice(choices=[0, 1, 2, 3, 4])
+    # empty = FuzzyChoice(choices=[True, False])

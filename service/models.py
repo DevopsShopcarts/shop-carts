@@ -28,6 +28,10 @@ class Shopcart(db.Model):
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63))
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+
 
     def __repr__(self):
         return "<Shopcart %r id=[%s]>" % (self.name, self.id)
@@ -37,7 +41,7 @@ class Shopcart(db.Model):
         Creates a Shopcart to the database
         """
         logger.info("Creating %s", self.name)
-        self.id = None  # id must be none to generate next primary key
+        # self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
