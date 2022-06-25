@@ -25,7 +25,6 @@ class ShopcartFactory(factory.Factory):
 
     class Meta:  # pylint: disable=too-few-public-methods
         """Maps factory to data model"""
-
         model = Shopcart
 
     id = factory.Sequence(lambda n: n)

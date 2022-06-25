@@ -6,7 +6,7 @@ Describe what your service does here
 
 from flask import Flask, jsonify, request, url_for, make_response, abort
 from .utils import status  # HTTP Status Codes
-from service.models import YourResourceModel
+from service.models import Shopcart
 
 # Import Flask application
 from . import app
