@@ -26,29 +26,27 @@ class TestYourResourceModel(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """This runs once before the entire test suite"""
-        # app.config["TESTING"] = True
-        # app.config["DEBUG"] = False
-        # app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
-        # app.logger.setLevel(logging.CRITICAL)
-        # Shopcart.init_db(app)
-        pass
+        app.config["TESTING"] = True
+        app.config["DEBUG"] = False
+        app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+        app.logger.setLevel(logging.CRITICAL)
+        Shopcart.init_db(app)
+        
 
     @classmethod
     def tearDownClass(cls):
         """This runs once after the entire test suite"""
-        # db.session.close()
-        pass
+        db.session.close()
 
     def setUp(self):
         """This runs before each test"""
-        # db.session.query(Pet).delete()  # clean up the last tests
-        # db.session.commit()
-        pass
+        db.session.query(Shopcart).delete()  # clean up the last tests
+        db.session.commit()
 
     def tearDown(self):
         """This runs after each test"""
-        # db.session.remove()
-        pass
+        db.session.remove()
+        
 
     ######################################################################
     #  T E S T   C A S E S
