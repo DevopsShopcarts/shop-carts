@@ -32,4 +32,4 @@ def index():
 def init_db():
     """Initializes the SQLAlchemy app"""
     global app
-    YourResourceModel.init_db(app)
+    Shopcart.init_db(app)
