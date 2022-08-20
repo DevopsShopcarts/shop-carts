@@ -37,30 +37,42 @@ create_model = api.model(
             required=True, description="The quantity of the Product"
         ),
         "price": fields.Float(required=True, description="The price of the Product"),
-        "shopcart_id": fields.Integer(
-            required=True, description="The shop cart id of the product"
+        # "shopcart_id": fields.Integer(
+        #     required=True, description="The shop cart id of the product"
+        # ),
+    },
+)
+
+
+product_model = api.inherit(
+    "ProductModel",
+    create_model,
+    {
+        "id": fields.String(
+            readOnly=True, description="The unique id assigned internally by service"
         ),
     },
 )
 
 
-product_model = api.model(
-    "Product",
-    # create_model,
-    {
-        "id": fields.Integer(
-            readOnly=True, description="The unique id assigned internally by service"
-        ),
-        "name": fields.String(required=True, description="The name of the Product", maxLength=260),
-        "quantity": fields.Integer(
-            required=True, description="The quantity of the Product"
-        ),
-        "price": fields.Float(required=True, description="The price of the Product"),
-        "shopcart_id": fields.Integer(
-            required=True, description="The shop cart id of the product"
-        ),
-    }
-)
+# product_model = api.model(
+#     "Product",
+#     # create_model,
+#     {
+#         "id": fields.Integer(
+#             readOnly=True, description="The unique id assigned internally by service"
+#         ),
+#         "name": fields.String(required=True, description="The name of the Product", maxLength=260),
+#         "quantity": fields.Integer(
+#             required=True, description="The quantity of the Product"
+#         ),
+#         "price": fields.Float(required=True, description="The price of the Product"),
+#         "shopcart_id": fields.Integer(
+#             required=True, description="The shop cart id of the product"
+#         ),
+#     }
+# )
+
 shopcart_model = api.model(
     "ShopcartModel",
     {
@@ -400,7 +412,7 @@ class ProductOperation(Resource):
     @api.doc("add_products")
     @api.response(400, "The posted data was not valid")
     @api.response(404, "Product not found")
-    @api.expect(product_parser, validate=True)
+    @api.expect(create_model, validate=True)
     @api.marshal_with(product_model, code=201)
     def post(self, id):
         """
@@ -418,6 +430,7 @@ class ProductOperation(Resource):
         product = Product()
         app.logger.debug("Payload = %s", api.payload)
         data = api.payload
+        data["shopcart_id"] = id
         product.deserialize(data)
         shopcart.products.append(product)
         shopcart.update()
