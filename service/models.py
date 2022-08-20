@@ -75,7 +75,7 @@ class Product(db.Model, PersistentBase):
 
     def delete(self):
         """Removes a Shopcart from the data store"""
-        logger.info("Deleting %s", self.id)
+        logger.info("Deleting product with id: %s", self.id)
         deletedCnt = db.session.delete(self)
         db.session.commit()
         return deletedCnt
@@ -91,7 +91,7 @@ class Product(db.Model, PersistentBase):
         """
         Creates a Product to the database
         """
-        logger.info("Creating %s", self.id)
+        logger.info("Creating product with id: %s", self.id)
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
@@ -106,14 +106,18 @@ class Product(db.Model, PersistentBase):
             "quantity": self.quantity,
         }
 
-    def deserialize(self, data: dict):
+    def deserialize(self, data: dict, shopcart_id: int=-1):
         """
         Deserializes a Product from a dictionary
         Args:
             data (dict): A dictionary containing the resource data
+            shopcart_id (int): A int stands for the id of the shopcart to which this product belongs
         """
         try:
-            self.shopcart_id = data["shopcart_id"]
+            if shopcart_id == -1:
+                self.shopcart_id = data["shopcart_id"]
+            else:
+                self.shopcart_id = shopcart_id
             self.name = data["name"]
             self.price = data["price"]
             self.quantity = data["quantity"]
@@ -161,7 +165,9 @@ class Shopcart(db.Model, PersistentBase):
         db.session.commit()
 
     def delete(self):
-        """Removes a Shopcart from the data store"""
+        """
+        Removes a Shopcart from the data store
+        """
         logger.info("Deleting %s", self.id)
         if self.products:
             logger.info("delete")
@@ -190,7 +196,7 @@ class Shopcart(db.Model, PersistentBase):
             shopcart["products"].append(product.serialize())
         return shopcart
 
-    def deserialize(self, data):
+    def deserialize(self, data: dict):
         """
         Deserializes a Shopcart from a dictionary
         Args:
@@ -205,8 +211,7 @@ class Shopcart(db.Model, PersistentBase):
                     product.delete()
             for json_product in product_list:
                 product = Product()
-                product.deserialize(json_product)
-                product.shopcart_id = self.id
+                product.deserialize(json_product, self.id)
                 self.products.append(product)
             self.update()
         except KeyError as error:
@@ -219,8 +224,13 @@ class Shopcart(db.Model, PersistentBase):
         return self
 
     @classmethod
+    # TODO
     def filter_by_product_name(cls, product_name):
-        """Returns Shopcarts which has the give product_name"""
+        """
+        The function return shopcarts which have products with the given product_name
+        Args:
+            product_name (string): the name of the product
+        """
         logger.info("Product name is: %s", product_name)
         selected_products = Product.filter_by_product_name(product_name)
         return [
@@ -229,9 +239,10 @@ class Shopcart(db.Model, PersistentBase):
 
     @classmethod
     def find_by_id(cls, id):
-        """Returns the Shopcart with the given customer id
+        """
+        The function return the shopcart with the given customer id
         Args:
-            id (Integer): the id of the customer you want to match
+            id (int): the id of the customer you want to match
         """
         logger.info("Processing id query for %s ...", id)
         return cls.query.filter(cls.id == id).first()

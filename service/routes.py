@@ -37,9 +37,6 @@ create_model = api.model(
             required=True, description="The quantity of the Product"
         ),
         "price": fields.Float(required=True, description="The price of the Product"),
-        # "shopcart_id": fields.Integer(
-        #     required=True, description="The shop cart id of the product"
-        # ),
     },
 )
 
@@ -50,6 +47,9 @@ product_model = api.inherit(
     {
         "id": fields.String(
             readOnly=True, description="The unique id assigned internally by service"
+        ),
+        "shopcart_id": fields.Integer(
+            required=True, description="The shop cart id of the product"
         ),
     },
 )
@@ -430,8 +430,8 @@ class ProductOperation(Resource):
         product = Product()
         app.logger.debug("Payload = %s", api.payload)
         data = api.payload
-        data["shopcart_id"] = id
-        product.deserialize(data)
+        product.deserialize(data, shopcart_id=id)
+        product.create()
         shopcart.products.append(product)
         shopcart.update()
         return product.serialize(), status.HTTP_201_CREATED
